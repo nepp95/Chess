@@ -1,0 +1,5 @@
+Project:
+  Name: Chess
+  StartScene: Scenes/Main.epscene
+  AssetDirectory: Assets
+  ScriptPath: Scripts/Binaries/Chess.dll
