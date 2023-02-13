@@ -1,0 +1,13 @@
+﻿# Visual studio/code
+.vs
+*.vcxproj*
+*.csproj*
+*.sln
+
+# Cache
+__pycache__
+*.epreg
+
+# Binaries
+**/Assets/Scripts/Binaries
+**/Assets/Scripts/Intermediates
