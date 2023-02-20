@@ -18,19 +18,30 @@ namespace Chess
 		Black
 	}
 
-	public class Piece : Entity 
+	public class Piece : Entity
 	{
-		public PieceType Type;
-		public PieceColor PieceColor;
-		public Vector2i Position;
+		internal PieceType Type;
+		internal PieceColor Color;
 
-		public Piece(PieceType type, Vector2i position, PieceColor color)
+		public Vector2i Position
 		{
-			this.Type = type;
-			this.Position = position;
-			this.PieceColor = color;
-
-			AddComponent<SpriteComponent>();
+			get
+			{
+				return new Vector2i((int)Translation.X, (int)Translation.Y);;
+			}
+			set
+			{
+				Translation = new Vector3(value.X, value.Y, 0.0f);
+			}
 		}
+
+		// OnCreate is called by the engine when a scene is started containing this entity
+		void OnCreate()
+		{}
+
+		// OnUpdate is called every frame when a scene is running containing this entity
+		// The 'ts' param, or timestep, contains the time passed since last frame
+		void OnUpdate(float ts)
+		{}
 	}
 }
