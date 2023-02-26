@@ -11,7 +11,6 @@ namespace Chess
 
 	public class Tile : Entity
 	{
-		public bool Selected = false;
 		public PieceColor Color;
 
 		private SpriteComponent SpriteComponent;

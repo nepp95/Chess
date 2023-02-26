@@ -10,8 +10,9 @@ namespace Chess
 		private int Size = 8;
 
 		private Dictionary<Vector2i, Piece> Pieces = new Dictionary<Vector2i, Piece>();
+		private Dictionary<Vector2i, Tile> Tiles = new Dictionary<Vector2i, Tile>();
 		private PieceColor ActiveTurn = PieceColor.White;
-		private Piece SelectedPiece;
+		private Entity SelectedEntity;
 
         // OnCreate is called by the engine when a scene is started containing this entity
         void OnCreate() 
@@ -24,20 +25,47 @@ namespace Chess
         void OnUpdate(float ts)
         {
 			Entity selectedEntity = GetSelectedEntity();
-			// IsTile
-			// IsPiece
-			// Get position of click in x and y
-
-			Piece piece = GetPiece(selectedEntity);
-
-			if (piece == null || SelectedPiece == null || SelectedPiece.Color != ActiveTurn)
+			if (selectedEntity == null)
 				return;
 
-			if (SelectedPiece.UUID != piece.UUID)
+			//  && selectedEntity.UUID != SelectedEntity.UUID --> implicitly so, because an entity can't be both a tile and a piece
+			if (IsTile(selectedEntity) && IsPiece(SelectedEntity)) 
 			{
-				OnSelectionChange(SelectedPiece, piece);
-				SelectedPiece = piece;
+				Piece piece = GetPiece(SelectedEntity);
+			
+				Vector2i targetPosition = GetTile(selectedEntity).Position;
+				if (IsValidMove(piece, targetPosition))
+					Move(piece, targetPosition);
 			}
+
+			SelectedEntity = selectedEntity;
+
+			if (SelectedEntity != null)
+				Log.Trace(SelectedEntity.Name);
+		}
+
+		private void Move(Piece piece, Vector2i targetPosition)
+		{
+			Log.Trace($"Moved {piece.Name} to {targetPosition}");
+		}
+
+		private bool IsValidMove(Piece piece, Vector2i targetPosition)
+		{
+			// TODO: Implement
+			if (piece.Color != ActiveTurn)
+				return false;
+
+			return true;
+		}
+
+		private bool IsPiece(Entity entity)
+		{
+			return Pieces.Where(piece => piece.Value.UUID == entity.UUID).Any();
+		}
+
+		private bool IsTile(Entity entity)
+		{
+			return Tiles.Where(tile => tile.Value.UUID == entity.UUID).Any();
 		}
 
 		private Piece GetPiece(Entity entity)
@@ -45,14 +73,19 @@ namespace Chess
 			if (entity == null)
 				return null;
 
-			foreach (KeyValuePair<Vector2i, Piece> piece in Pieces)
-			{
-				// TODO: EQUALS?
-				if (piece.Value.UUID == entity.UUID)
-					return piece.Value;
-			}
+			KeyValuePair<Vector2i, Piece> result = Pieces.Where(piece => piece.Value.UUID == entity.UUID).First();
 
-			return null;
+			return result.Value;
+		}
+
+		private Tile GetTile(Entity entity)
+		{
+			if (entity == null)
+				return null;
+
+			KeyValuePair<Vector2i, Tile> result = Tiles.Where(tile => tile.Value.UUID == entity.UUID).First();
+
+			return result.Value;
 		}
 
 		private void OnSelectionChange(Piece oldPiece, Piece newPiece)
@@ -140,6 +173,8 @@ namespace Chess
 				else
 					sc.Color = TileColors.Black;
 			}
+
+			Tiles.Add(position, tile);
 		}
 
 		private void AddPiece(PieceType type, Vector2i position, PieceColor color)
